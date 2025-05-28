@@ -2,39 +2,67 @@
 
 {% block title %}
 
-    Flask and Supabase Demo
+Flask and Turso Demo
 
 {% endblock %}
 
 
 {% block content %}
 
-    <section id="hero">
-        <h1>Flask and Supabase Demo</h1>
-    </section>
+<section id="hero">
+    <h1>Flask and Turso Demo</h1>
+</section>
 
-    <section id="things">
+<section id="things">
 
-        {% for thing in things %}
+    {% for thing in things %}
 
-            <article>
+    <article>
 
-                <header>
-                    <h4>{{ thing["name"] }}</h4>
-                </header>
+        <header>
+            <h4>{{ thing["name"] }}</h4>
+        </header>
 
-                <p>{{ thing["description"] }}</p>
+        <p>{{ thing["description"] }}</p>
 
-                <footer>
-                    <a href="/thing/{{ thing['id'] }}">More...</a>
+        <footer>
+            <a href="/thing/{{ thing.id }}">More</a>
 
-                    <a href="/delete/{{ thing['id'] }}">Delete</a>
-                </footer>
+            <a href="/delete/{{ thing.id }}">Delete</a>
+        </footer>
 
-            </article>
+    </article>
 
-        {% endfor %}
+    {% endfor %}
 
-    </section>
+</section>
+
+<section>
+    <article>
+        <form>
+            <label>
+                Name
+                <input type="text" name="name" required>
+            </label>
+
+            <label>
+                Description
+                <input type="text" name="description">
+            </label>
+
+            <label>
+                Price
+                <input type="number" name="price" min="0.0" required>
+            </label>
+
+            <label>
+                Rating
+                <input type="number" name="rating" min="0.0" max="5.0">
+            </label>
+
+            <button>Create</button>
+        </form>
+    </article>
+</section>
 
 {% endblock %}

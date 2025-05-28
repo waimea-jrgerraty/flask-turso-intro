@@ -1,7 +1,8 @@
-from flask          import Flask
-from flask          import render_template
-from libsql_client  import create_client_sync
-from dotenv         import load_dotenv
+from flask import Flask
+from flask import render_template
+from flask import redirect
+from libsql_client import create_client_sync
+from dotenv import load_dotenv
 import os
 
 # Load Turso environment variables from the .env file
@@ -16,9 +17,10 @@ app = Flask(__name__)
 # Track the DB connection
 client = None
 
-#-----------------------------------------------------------
+
+# -----------------------------------------------------------
 # Connect to the Turso DB and return the connection
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 def connect_db():
     global client
     # Not connected yet?
@@ -29,42 +31,39 @@ def connect_db():
     return client
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 # Home Page with list of things
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 @app.get("/")
 def home():
+    response = connect_db().execute("SELECT * FROM things ORDER BY name")
 
-    # TODO: Switch from SupaBase to Turso queries!
-    # response = supabase.table("things").select().order("name").execute()
-    # records = response.data
-
-    return render_template("pages/home.jinja", things=???)
+    return render_template("pages/home.jinja", things=response.rows)
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 # Thing details page
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 @app.get("/thing/<int:id>")
 def showThing(id):
+    response = connect_db().execute("SELECT * FROM things WHERE id=?", [id])
 
-    return render_template("pages/thing.jinja", thing=???)
+    return render_template("pages/thing.jinja", thing=response.rows[0])
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 # Thing deletion
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 @app.get("/delete/<int:id>")
 def deleteThing(id):
+    connect_db().execute("DELETE FROM things WHERE id=?", [id])
 
-    # TODO!!!!
-
-    return
+    return redirect("/")
 
 
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 # 404 error handler
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 @app.errorhandler(404)
 def notFound(error):
     return render_template("pages/404.jinja")
